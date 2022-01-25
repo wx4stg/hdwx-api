@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>HDWX</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/Footer-Clean.css">
+    <link rel="stylesheet" href="assets/css/Navigation-Clean.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-light navbar-expand-md navigation-clean" style="height: 100;">
+        <div class="container"><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button><img src="assets/img/ATMO-RGB_Lockup%20-%20Standard.svg" style="width: 275px;height: 100;">
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"></li>
+                    <li class="nav-item"><a class="nav-link" href="/wx4stg/">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Apps</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/wx4stg/api/">Developer API</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>HDWX API Documentation</h1><em>This reference should NOT be considered stable yet, changes may occur without warning. For inquiries contact stgardner4@tamu.edu</em>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <h3>URL Requests</h3><em>Instructions on how to request data.</em>
+                <h5>Getting all productTypes and their child products</h5><code>http://weather-dev.geos.tamu.edu/wx4stg/api/all-products.php</code>
+                <p><strong>&nbsp; &nbsp; Parameters:</strong>&nbsp;No variables are required or accepted.<br><strong>&nbsp; &nbsp; Returns:</strong>&nbsp;a JSON array of all productTypes, sorted numerically by their productTypeID.<br></p>
+                <h5>Getting product information</h5><code>http://weather-dev.geos.tamu.edu/wx4stg/api/product-info.php</code>
+                <p>&nbsp; &nbsp;&nbsp;<strong>Parameters:</strong><br>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;- productID:&nbsp;(int, required) the productID of the product you want metadata for<br>&nbsp; &nbsp; <strong>Returns:</strong> a JSON dictionary representing a product object.<br>&nbsp; &nbsp; <strong>Example:&nbsp;</strong><code>http://weather-dev.geos.tamu.edu/wx4stg/api/product-info.php?productID=0</code></p>
+                <h5>Getting list of available productRuns</h5><code>http://weather-dev.geos.tamu.edu/wx4stg/api/get-available-runtimes.php</code>
+                <p>&nbsp; &nbsp;&nbsp;<strong>Parameters:</strong><br>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;- productID:&nbsp;(int, required) the productID of the product you want runtimes for.<br>&nbsp; &nbsp; &nbsp; &nbsp; - start:&nbsp;(int, optional) if specified, runtimes before the start will not be returned.<br>&nbsp; &nbsp; &nbsp; &nbsp; - end:&nbsp;(int, optional) if specified, runtimes after the end will not be returned.<br>&nbsp; &nbsp; <strong>Returns:</strong> a JSON list of productRun initialization times. All times (in the return and parameters) are formatted as "yyyyMMddHHmm" <a href="https://nsdateformatter.com/">NSDateFormatter</a>&nbsp;or "%Y%m%d%H%M" <a href="strftime.org">strftime</a>.<br>&nbsp; &nbsp; <strong>Example:&nbsp;</strong><code>http://weather-dev.geos.tamu.edu/wx4stg/api/get-available-runtimes.php?productID=0&amp;start=202108260000&amp;end=202109040000</code></p>
+                <h5>Fetching a productRun and child productFrames</h5><code>http://weather-dev.geos.tamu.edu/wx4stg/api/get-run.php</code>
+                <p>&nbsp; &nbsp;&nbsp;<strong>Parameters:</strong><br>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;- productID:&nbsp;(int, required) the productID of the product you want run information for.<br>&nbsp; &nbsp; &nbsp; &nbsp; - runtime:&nbsp;(int, required) the initialization time of the run you're requesting formatted as "yyyyMMddHHmm" [<a href="https://nsdateformatter.com/">NSDateFormatter</a>] or "%Y%m%d%H%M" [<a href="strftime.org">strftime</a>].<br>&nbsp; &nbsp; <strong>Returns:</strong> a JSON dict representing a productRun object<br>&nbsp; &nbsp; <strong>Example:&nbsp;</strong><code>http://weather-dev.geos.tamu.edu/wx4stg/api/get-run.php?productID=0&amp;runtime=202109040000</code></p>
+                <h5>Fetching a raw frame file for display</h5><code>http://weather-dev.geos.tamu.edu/wx4stg/&lt;productPath&gt;/&lt;pathExtension&gt;/&lt;filename&gt;</code>
+                <p>&nbsp; &nbsp;&nbsp;<strong>Parameters:</strong><br>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;- productPath:&nbsp;(string, required) the productPath from the product object of the product you're trying to fetch<br>&nbsp; &nbsp; &nbsp; &nbsp; - pathExtension:&nbsp;(string, required) the pathExtension from the productRun object of the run you're trying to fetch<br>&nbsp; &nbsp; &nbsp; &nbsp; - filename: (string, required) the filename from the productFrame object of the frame you're trying to fetch<br>&nbsp; &nbsp; <strong>Returns:</strong> a file representing the data you just asked for<br>&nbsp; &nbsp; <strong>Example:&nbsp;</strong><code>http://weather-dev.geos.tamu.edu/wx4stg/gisproducts/radar/local/2021/08/13/0000/frame0.png</code></p>
+            </div>
+            <div class="col-md-6">
+                <h3>Object Types</h3><em>Definitions of expected format when requesting data.</em>
+                <h5>productType</h5>
+                <p>&nbsp; &nbsp; ProductTypes represent groups of products that should be sorted together.&nbsp;<br><br><strong>&nbsp; &nbsp; &nbsp; &nbsp; productTypeID:</strong>&nbsp;(int) unique numerical identifier for the productType<br><strong>&nbsp; &nbsp; &nbsp; &nbsp; productTypeDescription:</strong>&nbsp;(string) description of the productType<br><strong>&nbsp; &nbsp; &nbsp; &nbsp; products:</strong>&nbsp;(array) list of product objects associated with the productType<br></p>
+                <h5>product</h5>
+                <p>&nbsp; &nbsp; Products represent individual compiled data sources<br><br><strong>&nbsp; &nbsp; &nbsp; &nbsp; productID:</strong>&nbsp;(int) unique numerical identifier for the product.<br><strong>&nbsp; &nbsp; &nbsp; &nbsp; productDescription:</strong>&nbsp;(string) description of the product.<br><strong>&nbsp; &nbsp; &nbsp; &nbsp; productPath:</strong>&nbsp;(string) Either a URI, assumed to be relative to the hdwx server, to reach this product, OR a full URL to an external product. If productPath contains the substring "http", it is an external product, if not, it is a local product. See "URL Requests" for more information.<br><strong>&nbsp; &nbsp; &nbsp; &nbsp; productReloadTime:</strong>&nbsp;(int) the minimum time delay in seconds after the lastReloadTime that a product could publish new data. There may not be new data immediately after this delay, but there definitely won't be any before.<br>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<strong>lastReloadTime:</strong>&nbsp;(int)&nbsp;Date and time the product was last reloaded by the server, formatted as "yyyyMMddHHmm" <a href="https://nsdateformatter.com/">NSDateFormatter</a>&nbsp;or "%Y%m%d%H%M" <a href="strftime.org">strftime</a>.<br>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<strong>isForecast:</strong>&nbsp;(bool) true if the product is a prognostic forecast, false if the product is diagnostic observational data.<br>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<strong>isGIS:</strong>&nbsp;(bool) true if the product has GIS metadata for mapping its frames to a map.<br>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<strong>fileExtension:</strong>&nbsp;(string) The file type of the frame for the product.<br></p>
+                <h5>productRun</h5>
+                <p>&nbsp; &nbsp;&nbsp;ProductRuns represent one particular initialization of a product<br><br>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<strong>publishTime:</strong>&nbsp;(int)&nbsp;Date and time the run was originally published to the hdwx server, formatted as "yyyyMMddHHmm" [<a href="https://nsdateformatter.com/">NSDateFormatter</a>] or "%Y%m%d%H%M" [<a href="strftime.org">strftime</a>].<br>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<strong>pathExtension:</strong>&nbsp;(string) appended to the productPath to reach a particular run of a product. See "URL Requests" for more information.<br>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<strong>runName:</strong>&nbsp;(string) the display name of the run<br>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<strong>availableFrameCount:</strong>&nbsp;(int) products may take a long time for a run to complete in its entirety. This represents the number of frames that have completed generation and are ready to be displayed. If a run has completed, this will be equal to the totalFrameCount<br>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<strong>totalFrameCount:</strong>&nbsp;(int) the total number of frames a productRun has when all frames have been generated.<br>&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<strong>productFrames:</strong>&nbsp;(array) an array of productFrame objects that represent available frames for a product.</p>
+                <h5>productFrame</h5>
+                <p>&nbsp; &nbsp; productFrames are the metadata associated with a single time of a single product<br><br>&nbsp; &nbsp; &nbsp; &nbsp; <strong>filename:</strong>&nbsp;(string) the name of the file for a frame, to be appended to the pathExtension string. See "URL Requests" for more information.<br>&nbsp; &nbsp; &nbsp; &nbsp; <strong>gisInfo:</strong>&nbsp;(array)&nbsp;An array of the southwest and northeast lat/lon coordinates formatted as "lat,lon". The southwest corner will be the first object in the array, the northeast corner will be the second object. For non-GIS aware products ("isGIS" is False), both corners will be 0,0 and should be ignored.<br>&nbsp; &nbsp; &nbsp; &nbsp; <strong>fhour:</strong>&nbsp;(int) for products that are forecasts, the number of hours after initialization that the frame is valid for. Will always be 0 for non-forecasts and should be ignored.<br>&nbsp; &nbsp; &nbsp; &nbsp; <strong>valid:</strong>&nbsp;(int) Date and time the frame is valid for, formatted as "yyyyMMddHHmm" [<a href="https://nsdateformatter.com/">NSDateFormatter</a>] or "%Y%m%d%H%M" [<a href="strftime.org">strftime</a>].<br></p>
+            </div>
+        </div>
+    </div>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>
